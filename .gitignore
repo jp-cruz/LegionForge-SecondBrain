@@ -1,0 +1,62 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+.venv/
+venv/
+env/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+config/local.yaml
+config/local.yml
+
+# LLM provider state
+*.gguf
+*.bin
+models/
+
+# Raw sources — user data, not committed by default
+# To commit raw sources, remove this line or use git add -f
+raw/
+
+# Wiki — committed by default (this IS the knowledge base)
+# Remove !wiki/ if you want to gitignore it too
+!wiki/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Test artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# Logs
+*.log
+logs/
+
+# Vector DB / local indexes (regeneratable)
+.chroma/
+.qdrant/
+pgdata/
