@@ -250,7 +250,8 @@ function Update-ClaudeCodeConfig {
             "mcp-remote",
             "http://$ServerIP`:8100/mcp",
             "--header",
-            "x-brain-key:$AccessKey"
+            "x-brain-key:$AccessKey",
+            "--allow-http"
         )
     }
 
@@ -301,7 +302,8 @@ function Update-ClaudeDesktopConfig {
             "mcp-remote",
             "http://$ServerIP`:8100/mcp",
             "--header",
-            "x-brain-key:$AccessKey"
+            "x-brain-key:$AccessKey",
+            "--allow-http"
         )
     }
 
@@ -372,7 +374,8 @@ function Update-ClaudeCoworkConfig {
             "mcp-remote",
             "http://$ServerIP`:8100/mcp",
             "--header",
-            "x-brain-key:$AccessKey"
+            "x-brain-key:$AccessKey",
+            "--allow-http"
         )
     }
 
