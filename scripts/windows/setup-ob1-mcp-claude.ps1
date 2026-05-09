@@ -400,10 +400,10 @@ try {
     # Step 3: Validate connectivity and authentication (unless skipped)
     if (-not $SkipValidation) {
         $parts = $ServerAddress.Split(':')
-        $host = $parts[0]
+        $serverHost = $parts[0]
 
-        if (-not (Test-Connectivity $host 8100)) {
-            Write-Log "Cannot reach server at $host`:8100" "Error"
+        if (-not (Test-Connectivity $serverHost 8100)) {
+            Write-Log "Cannot reach server at $serverHost`:8100" "Error"
             $confirm = Read-Host "Continue anyway? (y/n)"
             if ($confirm -ne "y") {
                 throw "Setup cancelled due to connectivity issues"
