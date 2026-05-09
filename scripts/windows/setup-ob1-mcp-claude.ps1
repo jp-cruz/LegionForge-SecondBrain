@@ -41,6 +41,30 @@ function Write-Log {
     Write-Host $Message -ForegroundColor $Colors[$Level]
 }
 
+function ConvertTo-Hashtable {
+    param([object]$Object)
+
+    if ($Object -is [System.Collections.Hashtable]) {
+        return $Object
+    }
+
+    if ($Object -is [PSCustomObject]) {
+        $hashtable = @{}
+        $Object.PSObject.Properties | ForEach-Object {
+            if ($_.Value -is [PSCustomObject]) {
+                $hashtable[$_.Name] = ConvertTo-Hashtable $_.Value
+            } elseif ($_.Value -is [object[]]) {
+                $hashtable[$_.Name] = @($_.Value)
+            } else {
+                $hashtable[$_.Name] = $_.Value
+            }
+        }
+        return $hashtable
+    }
+
+    return $Object
+}
+
 function Test-Connectivity {
     param([string]$Address, [int]$Port = 8100)
 
@@ -232,20 +256,21 @@ function Update-ClaudeCodeConfig {
 
     $settings = @{}
     if (Test-Path $configPath) {
-        $existing = Get-Content $configPath -Raw | ConvertFrom-Json
-        $settings = $existing
+        $jsonContent = Get-Content $configPath -Raw | ConvertFrom-Json
+        # Convert to hashtable to allow modification
+        $settings = ConvertTo-Hashtable $jsonContent
     }
 
     if (-not $settings.mcpServers) {
-        $settings | Add-Member -NotePropertyName "mcpServers" -NotePropertyValue @{}
+        $settings["mcpServers"] = @{}
     }
 
-    $settings.mcpServers.ob1 = $ob1Config
+    $settings.mcpServers["ob1"] = $ob1Config
 
     Write-Log "  MCP server 'ob1' configured: http://$ServerIP`:8100/mcp" "Info"
 
     if (-not $DryRun) {
-        $settings | ConvertTo-Json | Set-Content $configPath -Encoding UTF8
+        $settings | ConvertTo-Json -Depth 10 | Set-Content $configPath -Encoding UTF8
         Write-Log "✓ Claude Code config saved to: $configPath" "Success"
     } else {
         Write-Log "[DRY RUN] Would save to: $configPath" "Warning"
@@ -282,20 +307,21 @@ function Update-ClaudeDesktopConfig {
 
     $settings = @{}
     if (Test-Path $configPath) {
-        $existing = Get-Content $configPath -Raw | ConvertFrom-Json
-        $settings = $existing
+        $jsonContent = Get-Content $configPath -Raw | ConvertFrom-Json
+        # Convert to hashtable to allow modification
+        $settings = ConvertTo-Hashtable $jsonContent
     }
 
     if (-not $settings.mcpServers) {
-        $settings | Add-Member -NotePropertyName "mcpServers" -NotePropertyValue @{}
+        $settings["mcpServers"] = @{}
     }
 
-    $settings.mcpServers.ob1 = $ob1Config
+    $settings.mcpServers["ob1"] = $ob1Config
 
     Write-Log "  MCP server 'ob1' configured: http://$ServerIP`:8100/mcp" "Info"
 
     if (-not $DryRun) {
-        $settings | ConvertTo-Json | Set-Content $configPath -Encoding UTF8
+        $settings | ConvertTo-Json -Depth 10 | Set-Content $configPath -Encoding UTF8
         Write-Log "✓ Claude Desktop config saved to: $configPath" "Success"
     } else {
         Write-Log "[DRY RUN] Would save to: $configPath" "Warning"
@@ -352,20 +378,21 @@ function Update-ClaudeCoworkConfig {
 
     $settings = @{}
     if (Test-Path $configPath) {
-        $existing = Get-Content $configPath -Raw | ConvertFrom-Json
-        $settings = $existing
+        $jsonContent = Get-Content $configPath -Raw | ConvertFrom-Json
+        # Convert to hashtable to allow modification
+        $settings = ConvertTo-Hashtable $jsonContent
     }
 
     if (-not $settings.mcpServers) {
-        $settings | Add-Member -NotePropertyName "mcpServers" -NotePropertyValue @{}
+        $settings["mcpServers"] = @{}
     }
 
-    $settings.mcpServers.ob1 = $ob1Config
+    $settings.mcpServers["ob1"] = $ob1Config
 
     Write-Log "  MCP server 'ob1' configured: http://$ServerIP`:8100/mcp" "Info"
 
     if (-not $DryRun) {
-        $settings | ConvertTo-Json | Set-Content $configPath -Encoding UTF8
+        $settings | ConvertTo-Json -Depth 10 | Set-Content $configPath -Encoding UTF8
         Write-Log "✓ Claude Cowork config saved to: $configPath" "Success"
     } else {
         Write-Log "[DRY RUN] Would save to: $configPath" "Warning"
